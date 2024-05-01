@@ -1,2 +1,7 @@
-dataset/
+data/
+example/VisionTransformer/data/
+checkpoints/
+__pycache__/
+example/VisionTransformer/__pycache__/
+example/VisionTransformer/model.pth
 .DS_Store

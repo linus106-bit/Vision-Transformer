@@ -5,6 +5,7 @@ class LinearProjection(nn.Module):
 
     def __init__(self, patch_vec_size, num_patches, latent_vec_dim, drop_rate):
         super().__init__()
+        print(patch_vec_size)
         self.linear_proj = nn.Linear(patch_vec_size, latent_vec_dim)
         self.cls_token = nn.Parameter(torch.randn(1, latent_vec_dim))
         self.pos_embedding = nn.Parameter(torch.randn(1, num_patches+1, latent_vec_dim))
