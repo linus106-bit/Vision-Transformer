@@ -58,9 +58,9 @@ class Flattened2Dpatches:
         weights = self.make_weights(trainset.targets, len(trainset.classes))  # 가중치 계산
         weights = torch.DoubleTensor(weights)
         sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, len(weights))
-        trainloader = DataLoader(trainset, batch_size=self.batch_size, sampler=sampler)
-        valloader = DataLoader(valset, batch_size=self.batch_size, shuffle=False)
-        testloader = DataLoader(testset, batch_size=self.batch_size, shuffle=False)
+        trainloader = DataLoader(trainset, batch_size=self.batch_size, num_workers=2,sampler=sampler)
+        valloader = DataLoader(valset, batch_size=self.batch_size, num_workers=2,shuffle=False)
+        testloader = DataLoader(testset, batch_size=self.batch_size, num_workers=2,shuffle=False)
 
         return trainloader, valloader, testloader
 

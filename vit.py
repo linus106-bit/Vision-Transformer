@@ -9,7 +9,6 @@ import os
 import torch.optim as optim
 from tqdm import tqdm
 import torchinfo
-import argparse
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -22,7 +21,7 @@ c = 3 # channel
 b = 128 # batch
 d = 128 # Dim of patched embeddings
 cls = 10 # Class token size
-L = 8 # Transformer block size
+L = 12 # Transformer block size
 head_num = 8 # attention heads
 drop_rate = 0.1
 n = w//p
@@ -36,10 +35,7 @@ class PositionalEmbedding(nn.Module):
         self.dropout = nn.Dropout(drop_rate)
         self.linear_proj = nn.Linear(p*p*c, d)
         self.x_class = nn.Parameter(torch.randn(b,1,d))
-        self.pos_emb = nn.Parameter(torch.randn(1,n*n+1,d)) # Shape가 이해가 잘 안된다
-
-        self.cls_token = nn.Parameter(torch.randn(1, d))
-        self.pos_embedding = nn.Parameter(torch.randn(1, n*n+1, d))
+        self.pos_emb = nn.Parameter(torch.randn(1,n*n+1,d)) # Cat 과 +의 차이
     def patchify(self,img):
         # Divide to patch
         patched_img = img.view(b,c,h//p,p,w//p,p) # 이미지 1개당 N*N개 패치가 나오고, 패치 하나의 이미지는 P*P*C
@@ -197,6 +193,7 @@ if __name__=='__main__':
     ViT.train()
     torchinfo.summary(ViT)
     num_train_loader = len(train_loader)
+    best_acc = 50
     for epoch in range(epochs):
         running_loss = 0
         for img, label in tqdm(train_loader):
@@ -213,4 +210,7 @@ if __name__=='__main__':
         train_loss = running_loss / num_train_loader
         val_acc, val_loss = accuracy(test_loader, ViT)
         print('[%d] train loss: %.3f, validation loss: %.3f, validation acc %.2f %%' % (epoch, train_loss, val_loss, val_acc))
-    torch.save(ViT, f'checkpoints/model_{epoch}.pth')
+        if val_acc > best_acc:
+            best_acc = val_acc
+            # print('[%d] train loss: %.3f, validation acc %.2f - Save the best model' % (epoch, train_loss, val_acc))
+            torch.save(ViT.state_dict(), f'checkpoints/model.pth')

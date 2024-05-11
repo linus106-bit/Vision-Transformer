@@ -10,7 +10,6 @@ import torch.optim as optim
 from tqdm import tqdm
 import torchinfo
 import argparse
-import patchdata
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -148,7 +147,7 @@ class VisionTransformerBlock(nn.Module):
     super(VisionTransformerBlock, self).__init__()
     self.bn1 = nn.LayerNorm(d) # Size of BatchNorm1d is the input's size
     self.bn2 = nn.LayerNorm(d) # Size of BatchNorm1d is the input's size
-    self.msa = MultiHeadAttention()
+    self.msa = MultiheadedSelfAttention()
     self.mlp = nn.Sequential(nn.Linear(d, mlp_hidden_dim),
                                 nn.GELU(), nn.Dropout(drop_rate),
                                 nn.Linear(mlp_hidden_dim, d),
@@ -233,12 +232,12 @@ transform = transforms.Compose(
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 batch_size = b
 
-train_set = torchvision.datasets.CIFAR10(root='./data', train=True,
+train_set = torchvision.datasets.CIFAR10(root='../data', train=True,
                                         download=True, transform=transform)
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size,
                                           shuffle=True, num_workers=2, drop_last=True)
 
-test_set = torchvision.datasets.CIFAR10(root='./data', train=False,
+test_set = torchvision.datasets.CIFAR10(root='../data', train=False,
                                        download=True, transform=transform)
 test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size,
                                          shuffle=False, num_workers=2,drop_last=True)

@@ -71,6 +71,7 @@ class TFencoderLayer(nn.Module):
 class VisionTransformer(nn.Module):
     def __init__(self, patch_vec_size, num_patches, latent_vec_dim, num_heads, mlp_hidden_dim, drop_rate, num_layers, num_classes):
         super().__init__()
+        print(patch_vec_size)
         self.patchembedding = LinearProjection(patch_vec_size=patch_vec_size, num_patches=num_patches,
                                                latent_vec_dim=latent_vec_dim, drop_rate=drop_rate)
         self.transformer = nn.ModuleList([TFencoderLayer(latent_vec_dim=latent_vec_dim, num_heads=num_heads,
